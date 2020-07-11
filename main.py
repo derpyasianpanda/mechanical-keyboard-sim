@@ -1,28 +1,36 @@
 from playsound import playsound
-import keyboard
+import keyboard as kb
 from os import walk
+from random import choice
 
-current_folder = "sounds\\nkcreams_glarses"
-(dirpath, dirnames, filenames) = next(walk(current_folder))
-filenames = [name.split(".")[0] for name in filenames]
+
+(_, dirnames, _) = next(walk("sounds"))
+
+current_folder = "sounds/nkcreams_glarses"
+(_, _, filenames) = next(walk(current_folder))
+filenames = [name.split(".")[0] for name in filenames if "_" not in name]
 pressed_keys = set()
-isLogging = True
+isLogging = False
 
 
-def hook_on_event(event):
+def on_event(event):
     key = event.name.lower()
-    if (isLogging):
-        print(event.event_type, key)
-    if event.event_type == keyboard.KEY_DOWN:
+    if event.event_type == kb.KEY_DOWN:
         if key not in pressed_keys:
             playsound(
-                f"{current_folder}\\{key if key in filenames else 'a'}.mp3",
+                f"{current_folder}/{key if key in filenames else choice(filenames)}.mp3",
                 block=False
             )
             pressed_keys.add(key)
-    elif event.event_type == keyboard.KEY_UP:
+    elif event.event_type == kb.KEY_UP:
         if key in pressed_keys:
             pressed_keys.remove(key)
 
-keyboard.hook(hook_on_event)
-keyboard.wait()
+
+if isLogging:
+    kb.hook(lambda e: print(e.event_type, e.name))
+kb.hook(on_event)
+
+print("Enjoy your kb sounds!")
+kb.wait("esc")
+print("Application Ended")
