@@ -7,7 +7,7 @@ keyboard. Specifically, it allows a user to test out a certain mechanical
 keyboard's sounds so that a user can "test" out what a certain switch can sound
 like
 
-Confirmed to work only on Windows.
+Confirmed to work only on Windows (maybe Linux after switching to threads).
 If you know of a good Python library that can play sounds cross-platform,
 please tell me (or pull request :D)
 
