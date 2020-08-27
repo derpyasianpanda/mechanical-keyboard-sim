@@ -1,3 +1,4 @@
+import threading
 from os import walk
 import keyboard as kb
 from time import sleep
@@ -44,12 +45,11 @@ def on_event(event):
     key = event.name.lower()
     if event.event_type == kb.KEY_DOWN:
         if key not in pressed_keys:
-            # When a key's sound isn't present, a random key noise is played
-            playsound(
-                sound_folder +
-                f"/{key if key in filenames else choice(filenames)}.mp3",
-                block=False  # Allows for asynchronous sound playback
-            )
+            threading.Thread(
+                target=playsound,
+                args=(sound_folder + f"/{key if key in filenames else choice(filenames)}.mp3", ),
+                daemon=True
+            ).start()
             pressed_keys.add(key)
     elif event.event_type == kb.KEY_UP:
         if key in pressed_keys:
@@ -60,6 +60,6 @@ if isLogging:
     kb.hook(lambda e: print(e.event_type, e.name))
 kb.hook(on_event)
 
-print("\nEnjoy your Keyboard sounds! (Press the escape key to quit)")
-kb.wait("esc")
+print("\nEnjoy your Keyboard sounds! (Press ctrl+q to quit)")
+kb.wait("ctrl+q")
 print("Application Ended")
