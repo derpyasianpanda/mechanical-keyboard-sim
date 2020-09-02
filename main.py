@@ -2,7 +2,7 @@ import threading
 from os import walk
 import keyboard as kb
 from time import sleep
-from random import choice
+from random import sample
 from playsound import playsound
 
 print("Welcome to the Mechanical Keyboard Simulator!\n")
@@ -26,7 +26,7 @@ while isChoosing:
             sound_folder += user_input
 
     (_, _, filenames) = next(walk(sound_folder))
-    filenames = [name.split(".")[0] for name in filenames if "_" not in name]
+    filenames = set([name.split(".")[0] for name in filenames if "_" not in name])
     if not filenames:
         print("There are no sounds in this folder! :(\n")
         sleep(.75)
@@ -47,7 +47,7 @@ def on_event(event):
         if key not in pressed_keys:
             threading.Thread(
                 target=playsound,
-                args=(sound_folder + f"/{key if key in filenames else choice(filenames)}.mp3", ),
+                args=(sound_folder + f"/{key if key in filenames else sample(filenames, 1)[0]}.mp3", ),
                 daemon=True
             ).start()
             pressed_keys.add(key)
